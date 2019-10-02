@@ -54,22 +54,32 @@ public class MyRSI {
 			try {
 				List<RSIPrice> rsiPriceList = new ArrayList<RSIPrice>();
 				// try {
-				List<RSIData> rsiList = collectRsiData(myStock);
 				List<StockData> priceList = collectPriceData(myStock);
-				List<STOCHDataSlow> stochSlowList = collectSTOCHData(myStock);
 
-				int size = priceList.size() > rsiList.size() ? rsiList.size()
-						: priceList.size();
-				for (int i = 0; i < size; i++) {
-					StockData price = priceList.get(i);
-					RSIData rsi = rsiList.get(i);
-					STOCHDataSlow stochDataSlow = stochSlowList.get(i);
+				double averageVolume = priceList.stream()
+						.mapToLong(x -> x.getVolume()).summaryStatistics()
+						.getAverage();
+				if (averageVolume > 500000) {
+					List<RSIData> rsiList = collectRsiData(myStock);
+					List<STOCHDataSlow> stochSlowList = collectSTOCHData(myStock);
 
-					rsiPriceList.add(new RSIPrice(myStock, price.getDateTime(),
-							rsi.getValue(), stochDataSlow.getSlowK(),
-							stochDataSlow.getSlowD(), price.getClose()));
+					int size = priceList.size() > rsiList.size() ? rsiList
+							.size() : priceList.size();
+					for (int i = 0; i < size; i++) {
+						StockData price = priceList.get(i);
+						RSIData rsi = rsiList.get(i);
+						STOCHDataSlow stochDataSlow = stochSlowList.get(i);
+
+						rsiPriceList.add(new RSIPrice(myStock, price
+								.getDateTime(), rsi.getValue(), stochDataSlow
+								.getSlowK(), stochDataSlow.getSlowD(), price
+								.getClose()));
+					}
+					runAnalysis(myStock, rsiPriceList);
 				}
-				runAnalysis(myStock, rsiPriceList);
+				else{
+					System.out.println("Average volume of "+myStock+" is less than 500000,actual volume is "+averageVolume);
+				}
 				// } catch (Exception e) {
 				// System.out.println("Exception occured for " + myStock);
 				// }
@@ -89,8 +99,8 @@ public class MyRSI {
 	// Todo-get oldest data for +/- 5 days to analyze k,d and rsi values
 	private static void runAnalysis(String myStock, List<RSIPrice> rsiPriceList) {
 
-		System.out.println("Run analysis is called for " + myStock
-				+ " with size of list" + rsiPriceList.size());
+//		System.out.println("Run analysis is called for " + myStock
+//				+ " with size of list" + rsiPriceList.size());
 		RSIPrice latest = rsiPriceList.stream().findFirst().get();
 		rsiPriceList
 				.stream()
