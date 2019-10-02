@@ -87,9 +87,13 @@ public class MyRSI {
 
 			} catch (AlphaVantageException e) {
 				e.printStackTrace();
-				System.out.println("something went wrong");
+				System.out.println("something went wrong" + e.getMessage() + e.getCause().toString());
 			} catch (NullPointerException e) {
 				System.out.println("NPE occured for " + myStock);
+				e.printStackTrace();
+			}
+			catch (Exception e) {
+				System.out.println("Exception occured for " + myStock + " " + e.getCause() + e.getMessage());
 				e.printStackTrace();
 			}
 		}
