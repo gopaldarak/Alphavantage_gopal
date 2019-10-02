@@ -43,7 +43,7 @@ public class MyRSI {
 
 		spxInfo = getSPXInfo();
 		Connection conn = DBUtils.getConnection();
-		ArrayList<String> selectStocks = DBUtils.selectStocks(conn);
+		List<String> selectStocks = DBUtils.selectStocks(conn).stream().skip(50).collect(Collectors.toList());
 		// ArrayList<String> selectStocks = new ArrayList<>();
 		// selectStocks.add("CCL");
 
@@ -207,7 +207,7 @@ public class MyRSI {
 	};
 
 	private static List<RSIData> getSPXInfo() throws Exception {
-		return collectRsiData("SPX").stream().filter(x -> x.getValue() < 30)
+		return collectRsiData("SPX").stream().filter(x -> x.getValue() < 38)
 				.collect(Collectors.toList());
 
 	}
